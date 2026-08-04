@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shooting the Statement — An AI Literacy Game</title>
+<style>
+/* ==========================================================
+   THEME
+   ========================================================== */
+:root{
+  --bg:#f4f6fb;
+  --panel:#ffffff;
+  --ink:#16203a;
+  --ink-soft:#5b6580;
+  --line:#dfe4ee;
+  --brand:#2f5fd8;
+  --brand-soft:#e8eefc;
+  --good:#128a4d;
+  --good-soft:#e2f5eb;
+  --bad:#c02b3e;
+  --bad-soft:#fdeaec;
+  --warn:#b06a00;
+  --shadow:0 1px 2px rgba(20,32,64,.06), 0 8px 24px rgba(20,32,64,.08);
+  --radius:16px;
+}
+html[data-theme="dark"]{
+  --bg:#0e1421;
+  --panel:#18202f;
+  --ink:#eef2f9;
+  --ink-soft:#9aa6bd;
+  --line:#2a344a;
+  --brand:#6f9bff;
+  --brand-soft:#1e2b47;
+  --good:#4ade9a;
+  --good-soft:#153126;
+  --bad:#ff8a99;
+  --bad-soft:#3a1a20;
+  --warn:#f0b45e;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.5; -webkit-font-smoothing:antialiased;
+}
+button{font-family:inherit}
+
+/* ==========================================================
+   LAYOUT
+   ========================================================== */
+.wrap{max-width:1080px;margin:0 auto;padding:20px 20px 64px}
+.screen{display:none;animation:rise .28s ease both}
+.screen.on{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ==========================================================
+   TOP BAR
+   ========================================================== */
+.topbar{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:12px 0 16px;border-bottom:1px solid var(--line);margin-bottom:22px;
+}
+.brandmark{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em;font-size:1.05rem}
+.brandmark .dot{
+  width:26px;height:26px;border-radius:50%;flex:0 0 auto;
+  background:radial-gradient(circle,var(--bad) 0 22%,var(--panel) 22% 42%,var(--bad) 42% 62%,var(--panel) 62% 82%,var(--bad) 82% 100%);
+  border:1px solid var(--line);
+}
+.topbar .spacer{flex:1}
+.iconbtn{
+  border:1px solid var(--line);background:var(--panel);color:var(--ink-soft);
+  border-radius:10px;padding:7px 12px;font-size:.85rem;cursor:pointer;font-weight:600;
+}
+.iconbtn:hover{border-color:var(--brand);color:var(--brand)}
+.iconbtn[aria-pressed="false"]{opacity:.55}
+
+/* ==========================================================
+   START SCREEN
+   ========================================================== */
+.hero{text-align:center;padding:26px 0 8px}
+.hero h1{font-size:clamp(2rem,5.5vw,3.3rem);margin:0 0 8px;letter-spacing:-.035em;line-height:1.08}
+.hero p.sub{font-size:1.1rem;color:var(--ink-soft);margin:0 auto 26px;max-width:34rem}
+.pill{
+  display:inline-block;background:var(--brand-soft);color:var(--brand);
+  font-weight:700;font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;
+  padding:6px 14px;border-radius:999px;margin-bottom:18px;
+}
+.roundgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin:30px 0}
+.roundcard{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:22px 20px;box-shadow:var(--shadow);text-align:left;
+}
+.roundcard .ic{font-size:1.8rem;display:block;margin-bottom:10px}
+.roundcard h3{margin:0 0 6px;font-size:1.12rem;letter-spacing:-.01em}
+.roundcard p{margin:0;color:var(--ink-soft);font-size:.93rem}
+.roundcard .count{
+  display:inline-block;margin-top:12px;font-size:.78rem;font-weight:700;
+  color:var(--ink-soft);background:var(--bg);border:1px solid var(--line);
+  padding:3px 10px;border-radius:999px;
+}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  background:var(--brand);color:#fff;border:none;border-radius:12px;
+  padding:15px 34px;font-size:1.05rem;font-weight:700;cursor:pointer;
+  box-shadow:0 4px 14px rgba(47,95,216,.28);transition:transform .12s,box-shadow .12s;
+}
+.btn:hover{transform:translateY(-1px);box-shadow:0 7px 20px rgba(47,95,216,.34)}
+.btn:active{transform:translateY(0)}
+.btn.ghost{
+  background:var(--panel);color:var(--ink);border:1px solid var(--line);box-shadow:none;
+  padding:13px 26px;font-size:.98rem;
+}
+.btn.ghost:hover{border-color:var(--brand);color:var(--brand);box-shadow:none}
+.btnrow{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.howto{
+  margin:34px auto 0;max-width:620px;background:var(--panel);border:1px solid var(--line);
+  border-radius:var(--radius);padding:20px 24px;text-align:left;box-shadow:var(--shadow);
+}
+.howto h4{margin:0 0 10px;font-size:.8rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft)}
+.howto ol{margin:0;padding-left:20px;color:var(--ink-soft);font-size:.95rem}
+.howto li{margin-bottom:5px}
+.howto b{color:var(--ink)}
+
+/* ==========================================================
+   HUD (in-game header)
+   ========================================================== */
+.hud{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:12px 18px;box-shadow:var(--shadow);margin-bottom:18px;
+}
+.hud .roundtag{font-weight:800;letter-spacing:-.01em;font-size:1rem}
+.hud .roundtag span{color:var(--ink-soft);font-weight:600}
+.hud .spacer{flex:1}
+.stat{text-align:center;min-width:62px}
+.stat .v{font-size:1.25rem;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.stat .k{font-size:.68rem;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-soft);font-weight:700}
+
+.progress{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:22px}
+.progress i{display:block;height:100%;background:var(--brand);border-radius:99px;transition:width .35s ease}
+
+.timerbar{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin:-14px 0 22px}
+.timerbar i{display:block;height:100%;background:var(--good);border-radius:99px;transition:width 1s linear,background .3s}
+.timerbar i.mid{background:var(--warn)}
+.timerbar i.low{background:var(--bad)}
+
+/* ==========================================================
+   QUESTION
+   ========================================================== */
+.qcard{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:30px 32px;box-shadow:var(--shadow);margin-bottom:24px;
+}
+.qcard .qnum{
+  font-size:.75rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--brand);margin-bottom:12px;
+}
+.statement{font-size:clamp(1.2rem,2.6vw,1.6rem);font-weight:650;letter-spacing:-.02em;margin:0}
+.askline{
+  margin:18px 0 0;font-size:1.02rem;font-weight:700;color:var(--ink);
+  padding-top:16px;border-top:1px dashed var(--line);
+}
+
+.airesponse{
+  margin:20px 0 0;background:var(--bg);border:1px solid var(--line);
+  border-left:4px solid var(--brand);border-radius:12px;padding:16px 18px;
+}
+.airesponse .lbl{
+  font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-soft);margin-bottom:6px;
+}
+.airesponse .txt{font-size:1.05rem;font-style:italic}
+
+.promptpair{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+.promptpair .pp{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.promptpair .pp .lbl{font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px}
+.promptpair .pp .txt{font-size:.98rem;font-family:ui-monospace,Consolas,monospace}
+@media(max-width:640px){.promptpair{grid-template-columns:1fr}}
+
+/* ==========================================================
+   TARGETS
+   ========================================================== */
+.targets{display:grid;gap:14px;cursor:crosshair}
+.targets.two{grid-template-columns:1fr 1fr}
+.targets.four{grid-template-columns:1fr 1fr}
+@media(max-width:640px){.targets.two,.targets.four{grid-template-columns:1fr}}
+
+.target{
+  position:relative;display:flex;align-items:center;gap:14px;text-align:left;
+  background:var(--panel);border:2px solid var(--line);border-radius:var(--radius);
+  padding:20px 22px;font-size:1.06rem;font-weight:600;color:var(--ink);
+  cursor:crosshair;box-shadow:var(--shadow);transition:border-color .15s,transform .12s,background .15s;
+  width:100%;
+}
+.target:hover:not(:disabled){border-color:var(--brand);transform:translateY(-2px);background:var(--brand-soft)}
+.target:disabled{cursor:default}
+.target .ring{
+  flex:0 0 auto;width:34px;height:34px;border-radius:50%;
+  border:2px solid var(--line);display:grid;place-items:center;
+  font-weight:800;font-size:.9rem;color:var(--ink-soft);transition:.15s;
+}
+.target:hover:not(:disabled) .ring{border-color:var(--brand);color:var(--brand)}
+.target.hit{border-color:var(--good);background:var(--good-soft);animation:pop .3s ease}
+.target.hit .ring{border-color:var(--good);color:var(--good)}
+.target.miss{border-color:var(--bad);background:var(--bad-soft);animation:shake .35s ease}
+.target.miss .ring{border-color:var(--bad);color:var(--bad)}
+.target.reveal{border-color:var(--good);background:var(--good-soft)}
+.target .mark{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:1.3rem}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.035)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+
+/* media targets */
+.target.media{flex-direction:column;align-items:stretch;gap:12px;padding:14px}
+.target.media .thumb{
+  width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;background:var(--bg);
+  border:1px solid var(--line);display:block;
+}
+.target.media .ph{
+  width:100%;aspect-ratio:4/3;border-radius:10px;background:var(--bg);
+  border:2px dashed var(--line);display:grid;place-items:center;text-align:center;
+  color:var(--ink-soft);font-size:.85rem;font-weight:600;padding:14px;
+}
+.target.media .cap{display:flex;align-items:center;gap:10px}
+.target.media audio{width:100%;cursor:pointer}
+
+/* ==========================================================
+   FEEDBACK
+   ========================================================== */
+.feedback{
+  margin-top:20px;border-radius:var(--radius);padding:20px 24px;
+  border:1px solid var(--line);background:var(--panel);box-shadow:var(--shadow);
+  display:none;animation:rise .25s ease both;
+}
+.feedback.on{display:block}
+.feedback.good{border-left:5px solid var(--good)}
+.feedback.bad{border-left:5px solid var(--bad)}
+.feedback .head{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.1rem;margin-bottom:8px}
+.feedback.good .head{color:var(--good)}
+.feedback.bad .head{color:var(--bad)}
+.feedback .why{color:var(--ink-soft);font-size:1rem;margin:0}
+.feedback .why b{color:var(--ink)}
+.feedback .next{margin-top:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.feedback .hintkey{font-size:.82rem;color:var(--ink-soft)}
+kbd{
+  background:var(--bg);border:1px solid var(--line);border-bottom-width:2px;
+  border-radius:6px;padding:1px 7px;font-size:.82em;font-family:ui-monospace,Consolas,monospace;
+}
+
+/* ==========================================================
+   RESULTS
+   ========================================================== */
+.scorehero{text-align:center;padding:20px 0 10px}
+.scorehero .big{font-size:clamp(3rem,11vw,5.5rem);font-weight:800;letter-spacing:-.05em;line-height:1;color:var(--brand)}
+.scorehero .of{color:var(--ink-soft);font-size:1.05rem;margin-top:4px}
+.scorehero .grade{font-size:1.35rem;font-weight:700;margin-top:14px}
+.breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:26px 0}
+.bd{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;text-align:center;box-shadow:var(--shadow)}
+.bd .v{font-size:1.7rem;font-weight:800;letter-spacing:-.02em}
+.bd .k{font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-soft);font-weight:700;margin-top:2px}
+
+.review{margin-top:14px}
+.review h3{font-size:.82rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 12px}
+.ritem{
+  background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--bad);
+  border-radius:12px;padding:16px 18px;margin-bottom:10px;box-shadow:var(--shadow);
+}
+.ritem.ok{border-left-color:var(--good)}
+.ritem .rq{font-weight:650;margin-bottom:8px}
+.ritem .ra{font-size:.93rem;color:var(--ink-soft)}
+.ritem .ra .yours{color:var(--bad);font-weight:700}
+.ritem .ra .right{color:var(--good);font-weight:700}
+.ritem .rw{font-size:.92rem;color:var(--ink-soft);margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
+
+.printonly{display:none}
+@media print{
+  body{background:#fff}
+  .topbar,.btnrow,.iconbtn,.howto{display:none!important}
+  .printonly{display:block}
+  .ritem,.bd,.qcard{box-shadow:none;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ================= TOP BAR ================= -->
+  <div class="topbar">
+    <div class="brandmark"><span class="dot"></span><span id="brandTitle">Shooting the Statement</span></div>
+    <div class="spacer"></div>
+    <button class="iconbtn" id="btnTimer"  aria-pressed="true"  title="Turn the countdown timer on or off">⏱ Timer</button>
+    <button class="iconbtn" id="btnSound"  aria-pressed="true"  title="Turn sound effects on or off">🔊 Sound</button>
+    <button class="iconbtn" id="btnTheme"  title="Switch between light and dark">🌙 Dark</button>
+    <button class="iconbtn" id="btnFull"   title="Fullscreen — best for projectors">⛶ Fullscreen</button>
+  </div>
+
+  <!-- ================= START ================= -->
+  <section class="screen on" id="scStart">
+    <div class="hero">
+      <span class="pill">AI Literacy · Interactive Quiz</span>
+      <h1 id="heroTitle">Shooting the Statement</h1>
+      <p class="sub" id="heroSub">Read the statement. Take aim. Shoot the right answer.</p>
+      <div class="btnrow">
+        <button class="btn" id="btnPlayAll">🎯 Start Full Game</button>
+      </div>
+    </div>
+
+    <div class="roundgrid" id="roundGrid"></div>
+
+    <div class="howto">
+      <h4>How to play</h4>
+      <ol>
+        <li>A <b>statement</b> or question appears at the top of the screen.</li>
+        <li>The answer choices below it are your <b>targets</b>.</li>
+        <li>Click a target — or press <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> — to shoot it.</li>
+        <li>You get an explanation after every shot, right or wrong.</li>
+        <li>Press <kbd>Enter</kbd> or <kbd>Space</kbd> to move to the next question.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ================= ROUND INTRO ================= -->
+  <section class="screen" id="scRound">
+    <div class="hero">
+      <span class="pill" id="riPill">Round</span>
+      <h1 id="riName"></h1>
+      <p class="sub" id="riInstr"></p>
+      <div class="btnrow">
+        <button class="btn" id="btnRoundGo">Begin Round →</button>
+      </div>
+      <p class="hintkey" style="margin-top:16px;color:var(--ink-soft);font-size:.85rem">
+        or press <kbd>Enter</kbd>
+      </p>
+    </div>
+  </section>
+
+  <!-- ================= PLAY ================= -->
+  <section class="screen" id="scPlay">
+    <div class="hud">
+      <div class="roundtag" id="hudRound"></div>
+      <div class="spacer"></div>
+      <div class="stat"><div class="v" id="hudScore">0</div><div class="k">Score</div></div>
+      <div class="stat"><div class="v" id="hudHits">0</div><div class="k">Hits</div></div>
+      <div class="stat"><div class="v" id="hudAcc">—</div><div class="k">Accuracy</div></div>
+      <div class="stat"><div class="v" id="hudTime">—</div><div class="k">Time</div></div>
+    </div>
+    <div class="progress"><i id="progBar" style="width:0%"></i></div>
+    <div class="timerbar" id="timerWrap"><i id="timerBar" style="width:100%"></i></div>
+
+    <div class="qcard">
+      <div class="qnum" id="qNum"></div>
+      <p class="statement" id="qStatement"></p>
+      <div id="qExtra"></div>
+      <p class="askline" id="qAsk" style="display:none"></p>
+    </div>
+
+    <div class="targets" id="targets"></div>
+
+    <div class="feedback" id="feedback">
+      <div class="head" id="fbHead"></div>
+      <p class="why" id="fbWhy"></p>
+      <div class="next">
+        <button class="btn" id="btnNext">Next →</button>
+        <span class="hintkey">or press <kbd>Enter</kbd></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= RESULTS ================= -->
+  <section class="screen" id="scEnd">
+    <div class="scorehero">
+      <span class="pill">Results</span>
+      <div class="big" id="endPct">0%</div>
+      <div class="of" id="endOf"></div>
+      <div class="grade" id="endGrade"></div>
+    </div>
+    <div class="breakdown" id="endBreak"></div>
+    <div class="btnrow" style="margin-bottom:26px">
+      <button class="btn" id="btnAgain">↻ Play Again</button>
+      <button class="btn ghost" id="btnPrint">🖨 Print / Save PDF</button>
+      <button class="btn ghost" id="btnHome">⌂ Main Menu</button>
+    </div>
+    <div class="review" id="review"></div>
+  </section>
+
+</div>
+
+<script src="questions.js"></script>
+<script>
+/* ============================================================
+   SHOOTING THE STATEMENT — game engine
+   Do not edit this file to change questions. Edit questions.js
+   ============================================================ */
+
+const $  = id => document.getElementById(id);
+const el = (t,c) => { const n=document.createElement(t); if(c) n.className=c; return n; };
+
+/* ---------- settings ---------- */
+const S = {
+  timer : localStorage.getItem('sts_timer') !== 'off',
+  sound : localStorage.getItem('sts_sound') !== 'off',
+  theme : localStorage.getItem('sts_theme') || 'light'
+};
+
+/* ---------- game state ---------- */
+let G = null;
+let tick = null;
+
+/* ============================================================
+   SOUND — generated in the browser, no files needed
+   ============================================================ */
+let ac = null;
+function beep(kind){
+  if(!S.sound) return;
+  try{
+    ac = ac || new (window.AudioContext||window.webkitAudioContext)();
+    const now = ac.currentTime;
+    const seq = kind==='hit'  ? [[660,0],[880,.09],[1180,.18]]
+              : kind==='miss' ? [[300,0],[180,.12]]
+              : kind==='end'  ? [[523,0],[659,.12],[784,.24],[1046,.36]]
+              :                 [[440,0]];
+    seq.forEach(([f,t])=>{
+      const o=ac.createOscillator(), g=ac.createGain();
+      o.type = kind==='miss' ? 'sawtooth' : 'triangle';
+      o.frequency.value=f;
+      g.gain.setValueAtTime(0,now+t);
+      g.gain.linearRampToValueAtTime(.14,now+t+.012);
+      g.gain.exponentialRampToValueAtTime(.0001,now+t+.22);
+      o.connect(g).connect(ac.destination);
+      o.start(now+t); o.stop(now+t+.24);
+    });
+  }catch(e){}
+}
+
+/* ============================================================
+   SCREENS
+   ============================================================ */
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  $(id).classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ============================================================
+   START SCREEN
+   ============================================================ */
+function buildStart(){
+  $('brandTitle').textContent = QUIZ.title;
+  $('heroTitle').textContent  = QUIZ.title;
+  $('heroSub').textContent    = QUIZ.subtitle ? QUIZ.subtitle + ' — read the statement, take aim, shoot the right answer.' : 'Read the statement. Take aim. Shoot the right answer.';
+  document.title = QUIZ.title + ' — ' + (QUIZ.subtitle||'Quiz');
+
+  const grid = $('roundGrid'); grid.innerHTML='';
+  QUIZ.rounds.forEach((r,i)=>{
+    const c = el('button','roundcard');
+    c.style.cursor='pointer';
+    c.innerHTML =
+      `<span class="ic">${r.icon||'🎯'}</span>
+       <h3>Round ${i+1} · ${r.name}</h3>
+       <p>${r.blurb||''}</p>
+       <span class="count">${r.questions.length} questions · click to play this round only</span>`;
+    c.onclick = ()=> startGame([i]);
+    grid.appendChild(c);
+  });
+}
+
+/* ============================================================
+   GAME FLOW
+   ============================================================ */
+function startGame(roundIdx){
+  G = {
+    rounds: roundIdx,          // indexes into QUIZ.rounds
+    ri: 0,                     // position within G.rounds
+    qi: 0,
+    score: 0,
+    hits: 0,
+    asked: 0,
+    log: [],
+    answered: false,
+    left: 0,
+    startedAt: Date.now()
+  };
+  roundIntro();
+}
+
+function curRound(){ return QUIZ.rounds[G.rounds[G.ri]]; }
+function curQ(){ return curRound().questions[G.qi]; }
+
+function roundIntro(){
+  const r = curRound();
+  $('riPill').textContent  = `Round ${G.rounds[G.ri]+1} of ${QUIZ.rounds.length}`;
+  $('riName').textContent  = `${r.icon||'🎯'} ${r.name}`;
+  $('riInstr').textContent = r.instructions || r.blurb || '';
+  show('scRound');
+}
+
+function renderQ(){
+  const r = curRound(), q = curQ();
+  G.answered = false;
+  $('feedback').classList.remove('on');
+
+  /* HUD */
+  $('hudRound').innerHTML = `${r.icon||'🎯'} ${r.name} <span>· Question ${G.qi+1} of ${r.questions.length}</span>`;
+  updateHud();
+
+  /* progress across the whole session */
+  const totalQ = G.rounds.reduce((s,i)=>s+QUIZ.rounds[i].questions.length,0);
+  $('progBar').style.width = (G.asked/totalQ*100) + '%';
+
+  /* statement */
+  $('qNum').textContent = `Statement ${G.qi+1}`;
+  $('qStatement').textContent = q.statement;
+
+  /* extras: AI response box / prompt comparison */
+  const ex = $('qExtra'); ex.innerHTML='';
+  if(q.aiResponse){
+    const b = el('div','airesponse');
+    b.innerHTML = `<div class="lbl">🤖 Artificial Intelligence Response</div><div class="txt">“${q.aiResponse}”</div>`;
+    ex.appendChild(b);
+  }
+  if(q.promptA && q.promptB){
+    const p = el('div','promptpair');
+    p.innerHTML =
+      `<div class="pp"><div class="lbl">Prompt A</div><div class="txt">${q.promptA}</div></div>
+       <div class="pp"><div class="lbl">Prompt B</div><div class="txt">${q.promptB}</div></div>`;
+    ex.appendChild(p);
+  }
+
+  /* the ask line */
+  if(q.prompt){ $('qAsk').textContent = q.prompt; $('qAsk').style.display='block'; }
+  else        { $('qAsk').style.display='none'; }
+
+  /* targets */
+  const tw = $('targets');
+  tw.innerHTML='';
+  tw.className = 'targets ' + (q.choices.length>2 ? 'four':'two');
+
+  q.choices.forEach((choice,i)=>{
+    const t = el('button','target' + (q.media?' media':''));
+    t.dataset.i = i;
+
+    if(q.media === 'image'){
+      const src = (q.mediaFiles||[])[i];
+      const img = el('img','thumb');
+      img.alt = choice;
+      img.onerror = ()=>{
+        const ph = el('div','ph');
+        ph.textContent = `Add your file here → ${src||'media/…'}`;
+        img.replaceWith(ph);
+      };
+      if(src) img.src = src; else img.onerror();
+      t.appendChild(img);
+      const cap = el('div','cap');
+      cap.innerHTML = `<span class="ring">${i+1}</span><span>${choice}</span>`;
+      t.appendChild(cap);
+
+    } else if(q.media === 'audio'){
+      const src = (q.mediaFiles||[])[i];
+      const a = el('audio'); a.controls = true; a.preload='none';
+      if(src) a.src = src;
+      a.onclick = e => e.stopPropagation();          // playing must not fire a shot
+      a.onerror = ()=>{
+        const ph = el('div','ph');
+        ph.style.aspectRatio='auto'; ph.style.padding='18px';
+        ph.textContent = `Add your file here → ${src||'media/…'}`;
+        a.replaceWith(ph);
+      };
+      t.appendChild(a);
+      const cap = el('div','cap');
+      cap.innerHTML = `<span class="ring">${i+1}</span><span>${choice} — click here to shoot</span>`;
+      t.appendChild(cap);
+
+    } else {
+      t.innerHTML = `<span class="ring">${i+1}</span><span>${choice}</span>`;
+    }
+
+    t.onclick = ()=> shoot(i);
+    tw.appendChild(t);
+  });
+
+  /* timer */
+  clearInterval(tick);
+  if(S.timer && r.seconds){
+    G.left = r.seconds;
+    $('timerWrap').style.display='block';
+    paintTimer(r.seconds);
+    tick = setInterval(()=>{
+      G.left--;
+      paintTimer(r.seconds);
+      if(G.left<=0){ clearInterval(tick); shoot(-1); }
+    },1000);
+  } else {
+    $('timerWrap').style.display='none';
+    G.left = 0;
+  }
+
+  show('scPlay');
+}
+
+function paintTimer(max){
+  const bar = $('timerBar');
+  const pct = Math.max(0, G.left/max*100);
+  bar.style.width = pct+'%';
+  bar.className = pct<25 ? 'low' : pct<55 ? 'mid' : '';
+  $('hudTime').textContent = G.left+'s';
+}
+
+function updateHud(){
+  $('hudScore').textContent = G.score;
+  $('hudHits').textContent  = G.hits;
+  $('hudAcc').textContent   = G.asked ? Math.round(G.hits/G.asked*100)+'%' : '—';
+  if(!S.timer) $('hudTime').textContent = '—';
+}
+
+/* ---------- fire ---------- */
+function shoot(i){
+  if(G.answered) return;
+  G.answered = true;
+  clearInterval(tick);
+
+  const r = curRound(), q = curQ();
+  const correct = (i === q.answer);
+  const timedOut = (i === -1);
+
+  G.asked++;
+  let gained = 0;
+  if(correct){
+    G.hits++;
+    const bonus = (S.timer && r.seconds) ? Math.round(G.left/r.seconds*50) : 0;
+    gained = 100 + bonus;
+    G.score += gained;
+  }
+
+  /* paint targets */
+  [...$('targets').children].forEach((t,idx)=>{
+    t.disabled = true;
+    if(idx === q.answer){
+      t.classList.add(correct ? 'hit' : 'reveal');
+      const m = el('span','mark'); m.textContent='✓'; m.style.color='var(--good)';
+      t.appendChild(m);
+    }
+    if(idx === i && !correct){
+      t.classList.add('miss');
+      const m = el('span','mark'); m.textContent='✕'; m.style.color='var(--bad)';
+      t.appendChild(m);
+    }
+  });
+
+  beep(correct?'hit':'miss');
+
+  G.log.push({
+    round: r.name,
+    statement: q.statement,
+    prompt: q.prompt || '',
+    yours: timedOut ? 'No answer (time ran out)' : q.choices[i],
+    right: q.choices[q.answer],
+    why: q.why || '',
+    correct
+  });
+
+  /* feedback panel */
+  const fb = $('feedback');
+  fb.className = 'feedback on ' + (correct?'good':'bad');
+  $('fbHead').innerHTML = correct
+    ? `🎯 Direct hit! <span style="font-weight:600;color:var(--ink-soft);font-size:.9rem">+${gained} pts</span>`
+    : (timedOut ? '⏱ Time&rsquo;s up!' : '✕ Missed');
+  $('fbWhy').innerHTML = (correct ? '' : `The correct answer is <b>${q.choices[q.answer]}</b>. `) + (q.why||'');
+
+  updateHud();
+  const totalQ = G.rounds.reduce((s,k)=>s+QUIZ.rounds[k].questions.length,0);
+  $('progBar').style.width = (G.asked/totalQ*100)+'%';
+
+  const last = (G.ri === G.rounds.length-1) && (G.qi === r.questions.length-1);
+  $('btnNext').textContent = last ? 'See Results →' : 'Next →';
+  setTimeout(()=> $('btnNext').focus(), 60);
+}
+
+function next(){
+  const r = curRound();
+  if(G.qi < r.questions.length-1){ G.qi++; renderQ(); return; }
+  if(G.ri < G.rounds.length-1){ G.ri++; G.qi=0; roundIntro(); return; }
+  finish();
+}
+
+/* ============================================================
+   RESULTS
+   ============================================================ */
+function finish(){
+  clearInterval(tick);
+  beep('end');
+  const total = G.log.length;
+  const pct   = total ? Math.round(G.hits/total*100) : 0;
+  const secs  = Math.round((Date.now()-G.startedAt)/1000);
+  const mins  = Math.floor(secs/60), rem = secs%60;
+
+  $('endPct').textContent = pct+'%';
+  $('endOf').textContent  = `${G.hits} of ${total} statements hit`;
+  $('endGrade').textContent =
+      pct===100 ? '🏆 Perfect run — sharpshooter!'
+    : pct>=80  ? '🎯 Excellent — strong AI literacy.'
+    : pct>=60  ? '👍 Good work — review the misses below.'
+    : pct>=40  ? '📖 Getting there — go over the explanations.'
+    :            '🔁 Give it another run after reviewing.';
+
+  $('endBreak').innerHTML =
+    `<div class="bd"><div class="v">${G.score}</div><div class="k">Total Score</div></div>
+     <div class="bd"><div class="v">${G.hits}/${total}</div><div class="k">Hits</div></div>
+     <div class="bd"><div class="v">${pct}%</div><div class="k">Accuracy</div></div>
+     <div class="bd"><div class="v">${mins}:${String(rem).padStart(2,'0')}</div><div class="k">Time</div></div>`;
+
+  const rv = $('review');
+  const misses = G.log.filter(x=>!x.correct);
+  rv.innerHTML = `<h3>${misses.length ? 'Review your misses' : 'Full review'}</h3>`;
+  (misses.length ? misses : G.log).forEach(x=>{
+    const d = el('div','ritem'+(x.correct?' ok':''));
+    d.innerHTML =
+      `<div class="rq">${x.statement}${x.prompt?` <span style="color:var(--ink-soft);font-weight:500">— ${x.prompt}</span>`:''}</div>
+       <div class="ra">Your shot: <span class="${x.correct?'right':'yours'}">${x.yours}</span>
+         ${x.correct?'':` · Correct: <span class="right">${x.right}</span>`}</div>
+       ${x.why?`<div class="rw">${x.why}</div>`:''}`;
+    rv.appendChild(d);
+  });
+  if(misses.length){
+    const note = el('p');
+    note.style.cssText='color:var(--ink-soft);font-size:.9rem;margin-top:14px';
+    note.textContent = `You answered ${total-misses.length} other statement(s) correctly.`;
+    rv.appendChild(note);
+  }
+
+  show('scEnd');
+}
+
+/* ============================================================
+   CONTROLS
+   ============================================================ */
+$('btnPlayAll').onclick = ()=> startGame(QUIZ.rounds.map((_,i)=>i));
+$('btnRoundGo').onclick = ()=> renderQ();
+$('btnNext').onclick    = next;
+$('btnAgain').onclick   = ()=> startGame(G.rounds);
+$('btnHome').onclick    = ()=> show('scStart');
+$('btnPrint').onclick   = ()=> window.print();
+
+function toggle(btn,key,on){
+  btn.setAttribute('aria-pressed', on ? 'true':'false');
+  localStorage.setItem(key, on?'on':'off');
+}
+$('btnTimer').onclick = ()=>{ S.timer=!S.timer; toggle($('btnTimer'),'sts_timer',S.timer);
+  if(!S.timer){ clearInterval(tick); $('timerWrap').style.display='none'; $('hudTime').textContent='—'; } };
+$('btnSound').onclick = ()=>{ S.sound=!S.sound; toggle($('btnSound'),'sts_sound',S.sound); if(S.sound) beep('hit'); };
+$('btnTheme').onclick = ()=>{
+  S.theme = S.theme==='dark' ? 'light':'dark';
+  document.documentElement.dataset.theme = S.theme;
+  localStorage.setItem('sts_theme',S.theme);
+  $('btnTheme').textContent = S.theme==='dark' ? '☀ Light':'🌙 Dark';
+};
+$('btnFull').onclick = ()=>{
+  if(document.fullscreenElement) document.exitFullscreen();
+  else document.documentElement.requestFullscreen?.();
+};
+
+/* keyboard */
+document.addEventListener('keydown', e=>{
+  const playing = $('scPlay').classList.contains('on');
+  if($('scRound').classList.contains('on') && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); renderQ(); return; }
+  if(!playing) return;
+  if(G && !G.answered && /^[1-4]$/.test(e.key)){
+    const i = +e.key-1;
+    if(i < curQ().choices.length){ e.preventDefault(); shoot(i); }
+    return;
+  }
+  if(G && G.answered && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); next(); }
+});
+
+/* boot */
+document.documentElement.dataset.theme = S.theme;
+$('btnTheme').textContent = S.theme==='dark' ? '☀ Light':'🌙 Dark';
+toggle($('btnTimer'),'sts_timer',S.timer);
+toggle($('btnSound'),'sts_sound',S.sound);
+buildStart();
+</script>
+</body>
+</html>
