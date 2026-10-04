@@ -1,5 +1,5 @@
 /* ============================================================
-   SHOOTING THE STATEMENT — QUESTION BANK
+   GAMIFIED ARTIFICIAL INTELLIGENCE LITERACY WEBSITE — QUESTION BANK
    ------------------------------------------------------------
    TEACHER: This is the ONLY file you need to edit to change
    the quiz. Do not touch index.html.
