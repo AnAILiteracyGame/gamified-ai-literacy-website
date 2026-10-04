@@ -18,7 +18,7 @@
 
 const QUIZ = {
 
-  title: "Shooting the Statement",
+  title: "Gamified Artificial Intelligence Literacy Website",
   subtitle: "An AI Literacy Game",
 
   rounds: [
