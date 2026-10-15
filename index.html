@@ -218,7 +218,7 @@ button, input{font-family:inherit}
 /* ==========================================================
    TARGETS
    ========================================================== */
-.targets{display:grid;gap:14px;cursor:crosshair}
+.targets{display:grid;gap:14px;cursor:pointer}
 .targets.two{grid-template-columns:1fr 1fr}
 .targets.four{grid-template-columns:1fr 1fr}
 @media(max-width:640px){.targets.two,.targets.four{grid-template-columns:1fr}}
@@ -227,7 +227,7 @@ button, input{font-family:inherit}
   position:relative;display:flex;align-items:center;gap:14px;text-align:left;
   background:var(--panel);border:2px solid var(--line);border-radius:var(--radius);
   padding:20px 22px;font-size:1.06rem;font-weight:600;color:var(--ink);
-  cursor:crosshair;box-shadow:var(--shadow);transition:border-color .15s,transform .12s,background .15s;
+  cursor:pointer;box-shadow:var(--shadow);transition:border-color .15s,transform .12s,background .15s;
   width:100%;
 }
 .target:hover:not(:disabled){border-color:var(--brand);transform:translateY(-2px);background:var(--brand-soft)}
@@ -336,7 +336,7 @@ kbd{
     <div class="hero">
       <span class="pill">AI Literacy · Interactive Quiz</span>
       <h1 id="heroTitle">Gamified Artificial Intelligence Literacy Website</h1>
-      <p class="sub" id="heroSub">Read the statement. Take aim. Shoot the right answer.</p>
+      <p class="sub" id="heroSub">Read the statement and select the correct answer.</p>
       
       <div class="namebox">
         <label for="studentName">Student Name:</label>
@@ -354,9 +354,9 @@ kbd{
       <h4>How to play</h4>
       <ol>
         <li>A <b>statement</b> or question appears at the top of the screen.</li>
-        <li>The answer choices below it are your <b>targets</b>.</li>
-        <li>Click a target — or press <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> — to shoot it.</li>
-        <li>You get an explanation after every shot, right or wrong.</li>
+        <li>The answer choices below it are your <b>options</b>.</li>
+        <li>Click an option — or press <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> — to select it.</li>
+        <li>You get an explanation after every answer, right or wrong.</li>
         <li>Press <kbd>Enter</kbd> or <kbd>Space</kbd> to move to the next question.</li>
       </ol>
     </div>
@@ -383,7 +383,7 @@ kbd{
       <div class="roundtag" id="hudRound"></div>
       <div class="spacer"></div>
       <div class="stat"><div class="v" id="hudScore">0</div><div class="k">Score</div></div>
-      <div class="stat"><div class="v" id="hudHits">0</div><div class="k">Hits</div></div>
+      <div class="stat"><div class="v" id="hudHits">0</div><div class="k">Correct</div></div>
       <div class="stat"><div class="v" id="hudAcc">—</div><div class="k">Accuracy</div></div>
       <div class="stat"><div class="v" id="hudTime">—</div><div class="k">Time</div></div>
     </div>
@@ -454,7 +454,7 @@ kbd{
 const $  = id => document.getElementById(id);
 const el = (t,c) => { const n=document.createElement(t); if(c) n.className=c; return n; };
 
-const TEACHER_PIN = "1234"; // CHANGE YOUR PIN HERE
+const TEACHER_PIN = "1234";
 
 /* ---------- settings ---------- */
 const S = {
@@ -545,7 +545,7 @@ function renderAdminTable(){
           <th>#</th>
           <th>Student</th>
           <th>Score</th>
-          <th>Hits</th>
+          <th>Correct</th>
           <th>Date & Time</th>
         </tr>
       </thead>
@@ -577,7 +577,7 @@ function exportToCSV(){
     alert("No student data available to export yet!");
     return;
   }
-  let csvContent = "data:text/csv;charset=utf-8,Rank,Student Name,Score,Hits,Total Questions,Accuracy (%),Date & Time\n";
+  let csvContent = "data:text/csv;charset=utf-8,Rank,Student Name,Score,Correct Answers,Total Questions,Accuracy (%),Date & Time\n";
   board.forEach((item, index) => {
     csvContent += `${index + 1},"${item.name.replace(/"/g, '""')}",${item.score},${item.hits},${item.total},${item.pct},"${item.date}"\n`;
   });
@@ -606,7 +606,7 @@ function show(id){
 function buildStart(){
   $('brandTitle').textContent = QUIZ.title;
   $('heroTitle').textContent  = QUIZ.title;
-  $('heroSub').textContent    = QUIZ.subtitle ? QUIZ.subtitle + ' — read the statement, take aim, shoot the right answer.' : 'Read the statement. Take aim. Shoot the right answer.';
+  $('heroSub').textContent    = QUIZ.subtitle ? QUIZ.subtitle + ' — read the statement and select the correct answer.' : 'Read the statement and select the correct answer.';
   document.title = QUIZ.title + ' — ' + (QUIZ.subtitle||'Quiz');
 
   const grid = $('roundGrid'); grid.innerHTML='';
@@ -641,8 +641,8 @@ function checkStudentName(){
    ============================================================ */
 function startGame(roundIdx){
   G = {
-    rounds: roundIdx,          // indexes into QUIZ.rounds
-    ri: 0,                     // position within G.rounds
+    rounds: roundIdx,
+    ri: 0,
     qi: 0,
     score: 0,
     hits: 0,
@@ -730,7 +730,7 @@ function renderQ(){
       const src = (q.mediaFiles||[])[i];
       const a = el('audio'); a.controls = true; a.preload='none';
       if(src) a.src = src;
-      a.onclick = e => e.stopPropagation();          // playing must not fire a shot
+      a.onclick = e => e.stopPropagation();
       a.onerror = ()=>{
         const ph = el('div','ph');
         ph.style.aspectRatio='auto'; ph.style.padding='18px';
@@ -739,7 +739,7 @@ function renderQ(){
       };
       t.appendChild(a);
       const cap = el('div','cap');
-      cap.innerHTML = `<span class="ring">${i+1}</span><span>${choice} — click here to shoot</span>`;
+      cap.innerHTML = `<span class="ring">${i+1}</span><span>${choice} — click here to select</span>`;
       t.appendChild(cap);
 
     } else {
@@ -834,8 +834,8 @@ function shoot(i){
   const fb = $('feedback');
   fb.className = 'feedback on ' + (correct?'good':'bad');
   $('fbHead').innerHTML = correct
-    ? `🎯 Direct hit! <span style="font-weight:600;color:var(--ink-soft);font-size:.9rem">+${gained} pts</span>`
-    : (timedOut ? '⏱ Time&rsquo;s up!' : '✕ Missed');
+    ? `✓ Correct! <span style="font-weight:600;color:var(--ink-soft);font-size:.9rem">+${gained} pts</span>`
+    : (timedOut ? '⏱ Time&rsquo;s up!' : '✕ Incorrect');
   $('fbWhy').innerHTML = (correct ? '' : `The correct answer is <b>${q.choices[q.answer]}</b>. `) + (q.why||'');
 
   updateHud();
@@ -869,28 +869,28 @@ function finish(){
   const studentName = $('studentName').value || 'Anonymous Student';
   saveScore(studentName, G.score, G.hits, total, pct);
 
-  $('endPct').textContent = pct+'\%';$('endOf').textContent  = `${G.hits} of ${total} statements hit`;
+  $('endPct').textContent = pct+'\%';$('endOf').textContent  = `${G.hits} of ${total} statements correct`;
   $('endGrade').textContent =
-      pct===100 ? '🏆 Perfect run — sharpshooter!'
+      pct===100 ? '🏆 Perfect score!'
     : pct>=80  ? '🎯 Excellent — strong AI literacy.'
-    : pct>=60  ? '👍 Good work — review the misses below.'
+    : pct>=60  ? '👍 Good work — review the answers below.'
     : pct>=40  ? '📖 Getting there — go over the explanations.'
     :            '🔁 Give it another run after reviewing.';
 
   $('endBreak').innerHTML =
     `<div class="bd"><div class="v">${G.score}</div><div class="k">Total Score</div></div>
-     <div class="bd"><div class="v">${G.hits}/${total}</div><div class="k">Hits</div></div>
+     <div class="bd"><div class="v">${G.hits}/${total}</div><div class="k">Correct</div></div>
      <div class="bd"><div class="v">${pct}%</div><div class="k">Accuracy</div></div>
      <div class="bd"><div class="v">${mins}:${String(rem).padStart(2,'0')}</div><div class="k">Time</div></div>`;
 
   const rv = $('review');
   const misses = G.log.filter(x=>!x.correct);
-  rv.innerHTML = `<h3>${misses.length ? 'Review your misses' : 'Full review'}</h3>`;
+  rv.innerHTML = `<h3>${misses.length ? 'Review your incorrect answers' : 'Full review'}</h3>`;
   (misses.length ? misses : G.log).forEach(x=>{
     const d = el('div','ritem'+(x.correct?' ok':''));
     d.innerHTML =
       `<div class="rq">${x.statement}${x.prompt?` <span style="color:var(--ink-soft);font-weight:500">— ${x.prompt}</span>`:''}</div>
-       <div class="ra">Your shot: <span class="${x.correct?'right':'yours'}">${x.yours}</span>
+       <div class="ra">Your answer: <span class="${x.correct?'right':'yours'}">${x.yours}</span>
          ${x.correct?'':` · Correct: <span class="right">${x.right}</span>`}</div>
        ${x.why?`<div class="rw">${x.why}</div>`:''}`;
     rv.appendChild(d);
