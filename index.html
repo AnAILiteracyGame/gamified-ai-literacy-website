@@ -46,7 +46,7 @@ body{
   font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
   line-height:1.5; -webkit-font-smoothing:antialiased;
 }
-button{font-family:inherit}
+button, input{font-family:inherit}
 
 /* ==========================================================
    LAYOUT
@@ -88,6 +88,17 @@ button{font-family:inherit}
   font-weight:700;font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;
   padding:6px 14px;border-radius:999px;margin-bottom:18px;
 }
+.namebox{
+  margin:0 auto 20px;max-width:320px;text-align:left;
+}
+.namebox label{
+  display:block;font-size:.82rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px;
+}
+.namebox input{
+  width:100%;padding:12px 16px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-size:1rem;outline:none;
+}
+.namebox input:focus{border-color:var(--brand)}
+
 .roundgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin:30px 0}
 .roundcard{
   background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
@@ -114,7 +125,11 @@ button{font-family:inherit}
   padding:13px 26px;font-size:.98rem;
 }
 .btn.ghost:hover{border-color:var(--brand);color:var(--brand);box-shadow:none}
+.btn.small-btn{padding:6px 12px;font-size:.8rem;border-radius:8px}
+.btn.danger-btn{background:var(--bad);box-shadow:none}
+.btn.danger-btn:hover{background:#a02334}
 .btnrow{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+
 .howto{
   margin:34px auto 0;max-width:620px;background:var(--panel);border:1px solid var(--line);
   border-radius:var(--radius);padding:20px 24px;text-align:left;box-shadow:var(--shadow);
@@ -123,6 +138,26 @@ button{font-family:inherit}
 .howto ol{margin:0;padding-left:20px;color:var(--ink-soft);font-size:.95rem}
 .howto li{margin-bottom:5px}
 .howto b{color:var(--ink)}
+
+/* ==========================================================
+   HIDDEN ADMIN MODAL
+   ========================================================== */
+.admin-modal{
+  display:none;position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.6);z-index:9999;place-items:center;padding:20px;
+}
+.admin-modal.on{display:grid}
+.admin-content{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:24px;max-width:650px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow);
+}
+.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.admin-header h3{margin:0;font-size:1.2rem}
+
+.l-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:.95rem}
+.l-table th{text-align:left;padding:8px;border-bottom:2px solid var(--line);color:var(--ink-soft);font-size:.78rem;text-transform:uppercase}
+.l-table td{padding:10px 8px;border-bottom:1px solid var(--line)}
+.l-table tr:last-child td{border-bottom:none}
 
 /* ==========================================================
    HUD (in-game header)
@@ -302,6 +337,12 @@ kbd{
       <span class="pill">AI Literacy · Interactive Quiz</span>
       <h1 id="heroTitle">Gamified Artificial Intelligence Literacy Website</h1>
       <p class="sub" id="heroSub">Read the statement. Take aim. Shoot the right answer.</p>
+      
+      <div class="namebox">
+        <label for="studentName">Student Name:</label>
+        <input type="text" id="studentName" placeholder="Enter your full name..." required />
+      </div>
+
       <div class="btnrow">
         <button class="btn" id="btnPlayAll">🎯 Start Full Game</button>
       </div>
@@ -382,8 +423,24 @@ kbd{
       <button class="btn ghost" id="btnPrint">🖨 Print / Save PDF</button>
       <button class="btn ghost" id="btnHome">⌂ Main Menu</button>
     </div>
+
     <div class="review" id="review"></div>
   </section>
+
+  <!-- ================= SECRET ADMIN MODAL ================= -->
+  <div class="admin-modal" id="adminModal">
+    <div class="admin-content">
+      <div class="admin-header">
+        <h3>🔒 Teacher Dashboard (Experimental Data)</h3>
+        <button class="btn ghost small-btn" onclick="closeAdmin()">✕ Close</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <button class="btn ghost small-btn" onclick="exportToCSV()">📥 Export Excel (CSV)</button>
+        <button class="btn danger-btn small-btn" onclick="clearLeaderboard()">🗑️ Clear Data for Next Section</button>
+      </div>
+      <div id="adminTableWrap"></div>
+    </div>
+  </div>
 
 </div>
 
@@ -396,6 +453,8 @@ kbd{
 
 const $  = id => document.getElementById(id);
 const el = (t,c) => { const n=document.createElement(t); if(c) n.className=c; return n; };
+
+const TEACHER_PIN = "1234"; // CHANGE YOUR PIN HERE
 
 /* ---------- settings ---------- */
 const S = {
@@ -435,6 +494,104 @@ function beep(kind){
 }
 
 /* ============================================================
+   SECRET ADMIN & DATA EXPORT SYSTEM
+   ============================================================ */
+function getLeaderboard(){
+  try {
+    return JSON.parse(localStorage.getItem('ai_game_leaderboard')) || [];
+  } catch(e){
+    return [];
+  }
+}
+
+function saveScore(name, score, hits, total, pct){
+  const board = getLeaderboard();
+  const entry = {
+    name: name.trim() || 'Anonymous Student',
+    score: score,
+    hits: hits,
+    total: total,
+    pct: pct,
+    date: new Date().toLocaleString()
+  };
+  board.push(entry);
+  board.sort((a,b) => b.score - a.score);
+  localStorage.setItem('ai_game_leaderboard', JSON.stringify(board));
+}
+
+function openAdmin(){
+  const pin = prompt("Enter Teacher PIN:");
+  if(pin === TEACHER_PIN){
+    renderAdminTable();
+    $('adminModal').classList.add('on');
+  } else if(pin !== null){
+    alert("Incorrect PIN!");
+  }
+}
+
+function closeAdmin(){
+  $('adminModal').classList.remove('on');
+}
+
+function renderAdminTable(){
+  const board = getLeaderboard();
+  let html = '';
+  if(board.length === 0){
+    html = '<p style="color:var(--ink-soft);font-size:.9rem;margin:0;">No scores recorded for this section yet.</p>';
+  } else {
+    html = `<table class="l-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Student</th>
+          <th>Score</th>
+          <th>Hits</th>
+          <th>Date & Time</th>
+        </tr>
+      </thead>
+      <tbody>`;
+    board.forEach((item, index)=>{
+      html += `<tr>
+        <td><b>${index + 1}</b></td>
+        <td>${item.name}</td>
+        <td><b>${item.score}</b></td>
+        <td>${item.hits}/${item.total} (${item.pct}%)</td>
+        <td style="color:var(--ink-soft);font-size:.85rem;">${item.date}</td>
+      </tr>`;
+    });
+    html += '</tbody></table>';
+  }
+  $('adminTableWrap').innerHTML = html;
+}
+
+function clearLeaderboard(){
+  if(confirm("Are you sure you want to clear the data for the next section? Make sure you export your Excel results first!")){
+    localStorage.removeItem('ai_game_leaderboard');
+    renderAdminTable();
+  }
+}
+
+function exportToCSV(){
+  const board = getLeaderboard();
+  if(board.length === 0){
+    alert("No student data available to export yet!");
+    return;
+  }
+  let csvContent = "data:text/csv;charset=utf-8,Rank,Student Name,Score,Hits,Total Questions,Accuracy (%),Date & Time\n";
+  board.forEach((item, index) => {
+    csvContent += `${index + 1},"${item.name.replace(/"/g, '""')}",${item.score},${item.hits},${item.total},${item.pct},"${item.date}"\n`;
+  });
+
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+  link.setAttribute("download", `AI_Game_Results_${new Date().toISOString().slice(0,10)}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+/* ============================================================
    SCREENS
    ============================================================ */
 function show(id){
@@ -461,9 +618,22 @@ function buildStart(){
        <h3>Round ${i+1} · ${r.name}</h3>
        <p>${r.blurb||''}</p>
        <span class="count">${r.questions.length} questions · click to play this round only</span>`;
-    c.onclick = ()=> startGame([i]);
+    c.onclick = ()=> {
+      if(!checkStudentName()) return;
+      startGame([i]);
+    };
     grid.appendChild(c);
   });
+}
+
+function checkStudentName(){
+  const nameInput = $('studentName');
+  if(!nameInput.value.trim()){
+    alert('Please enter your name before starting the game!');
+    nameInput.focus();
+    return false;
+  }
+  return true;
 }
 
 /* ============================================================
@@ -695,8 +865,11 @@ function finish(){
   const secs  = Math.round((Date.now()-G.startedAt)/1000);
   const mins  = Math.floor(secs/60), rem = secs%60;
 
-  $('endPct').textContent = pct+'%';
-  $('endOf').textContent  = `${G.hits} of ${total} statements hit`;
+  // Save score to local storage
+  const studentName = $('studentName').value || 'Anonymous Student';
+  saveScore(studentName, G.score, G.hits, total, pct);
+
+  $('endPct').textContent = pct+'\%';$('endOf').textContent  = `${G.hits} of ${total} statements hit`;
   $('endGrade').textContent =
       pct===100 ? '🏆 Perfect run — sharpshooter!'
     : pct>=80  ? '🎯 Excellent — strong AI literacy.'
@@ -733,23 +906,22 @@ function finish(){
 }
 
 /* ============================================================
-   CONTROLS
+   CONTROLS & SHORTCUTS
    ============================================================ */
-$('btnPlayAll').onclick = ()=> startGame(QUIZ.rounds.map((_,i)=>i));
-$('btnRoundGo').onclick = ()=> renderQ();
-$('btnNext').onclick    = next;
+$('btnPlayAll').onclick = ()=> {
+  if(!checkStudentName()) return;
+  startGame(QUIZ.rounds.map((_,i)=>i));
+};
+$('btnRoundGo').onclick = ()=> renderQ();$('btnNext').onclick    = next;
 $('btnAgain').onclick   = ()=> startGame(G.rounds);
-$('btnHome').onclick    = ()=> show('scStart');
-$('btnPrint').onclick   = ()=> window.print();
+$('btnHome').onclick    = ()=> show('scStart');$('btnPrint').onclick   = ()=> window.print();
 
 function toggle(btn,key,on){
   btn.setAttribute('aria-pressed', on ? 'true':'false');
   localStorage.setItem(key, on?'on':'off');
 }
 $('btnTimer').onclick = ()=>{ S.timer=!S.timer; toggle($('btnTimer'),'sts_timer',S.timer);
-  if(!S.timer){ clearInterval(tick); $('timerWrap').style.display='none'; $('hudTime').textContent='—'; } };
-$('btnSound').onclick = ()=>{ S.sound=!S.sound; toggle($('btnSound'),'sts_sound',S.sound); if(S.sound) beep('hit'); };
-$('btnTheme').onclick = ()=>{
+  if(!S.timer){ clearInterval(tick); $('timerWrap').style.display='none'; $('hudTime').textContent='—'; } };$('btnSound').onclick = ()=>{ S.sound=!S.sound; toggle($('btnSound'),'sts_sound',S.sound); if(S.sound) beep('hit'); };$('btnTheme').onclick = ()=>{
   S.theme = S.theme==='dark' ? 'light':'dark';
   document.documentElement.dataset.theme = S.theme;
   localStorage.setItem('sts_theme',S.theme);
@@ -762,6 +934,13 @@ $('btnFull').onclick = ()=>{
 
 /* keyboard */
 document.addEventListener('keydown', e=>{
+  // Secret admin shortcut: Ctrl + Shift + L
+  if(e.ctrlKey && e.shiftKey && (e.key === 'L' || e.key === 'l')){
+    e.preventDefault();
+    openAdmin();
+    return;
+  }
+
   const playing = $('scPlay').classList.contains('on');
   if($('scRound').classList.contains('on') && (e.key==='Enter'||e.key===' ')){ e.preventDefault(); renderQ(); return; }
   if(!playing) return;
