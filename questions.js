@@ -1,108 +1,95 @@
 /* ============================================================
-   GAMIFIED ARTIFICIAL INTELLIGENCE LITERACY WEBSITE — QUESTION BANK
-   ------------------------------------------------------------
-   TEACHER: This is the ONLY file you need to edit to change
-   the quiz. Do not touch index.html.
-
-   HOW TO ADD A QUESTION
-   ---------------------
-   {
-     statement: "The question or statement shown on screen.",
-     choices:   ["Choice A", "Choice B"],       // 2, 3, or 4 choices
-     answer:    0,                               // 0 = first choice, 1 = second, etc.
-     why:       "Short explanation shown after answering."
-   }
-
-   Separate each question with a comma. Keep the square brackets.
+   GAMIFIED ARTIFICIAL INTELLIGENCE LITERACY WEBSITE — question bank
    ============================================================ */
 
 const QUIZ = {
-
   title: "Gamified Artificial Intelligence Literacy Website",
   subtitle: "An AI Literacy Game",
-
   rounds: [
-
-    /* ========================================================
-       ROUND 1 — KNOWLEDGE
-       ======================================================== */
     {
-      id: "knowledge",
       name: "Knowledge",
       icon: "📘",
       blurb: "Match the definition to the correct AI term.",
-      instructions: "Read the definition, then select the term that matches it.",
-      seconds: 20,
-      questions: [
-        {
-          statement: "A set of instructions that a computer follows to solve a problem or complete a task.",
-          choices: ["Algorithm", "Training Data"],
-          answer: 0,
-          why: "An algorithm is the step-by-step procedure a computer follows. Training data is the information an AI learns from — not the instructions themselves."
-        },
-        {
-          statement: "A type of Artificial Intelligence that creates new content, such as text, images, audio, or code.",
-          choices: ["Reactive Artificial Intelligence", "Generative Artificial Intelligence"],
-          answer: 1,
-          why: "Generative AI produces new content. Reactive AI only responds to what is in front of it and does not create anything new."
-        },
-        {
-          statement: "A field of computer science focused on creating systems that perform tasks requiring human intelligence.",
-          choices: ["Artificial Intelligence", "Databases"],
-          answer: 0,
-          why: "Artificial Intelligence is the whole field. A database only stores and organizes information — it does not reason or decide."
-        },
-        {
-          /* FIXED: the original said AI "reduces" false information.
-             The correct definition is that it PRODUCES false information. */
-          statement: "A mistake where an Artificial Intelligence produces false, inaccurate, or made-up information.",
-          choices: ["Artificial Intelligence Hallucination", "Data Collection"],
-          answer: 0,
-          why: "An AI hallucination is confident but wrong output. Always verify AI answers against a trusted source."
-        },
-        {
-          statement: "The final response or result produced by an Artificial Intelligence system after processing information.",
-          choices: ["Output", "Feedback"],
-          answer: 0,
-          why: "The output is what the AI gives back. Feedback is what YOU give the AI afterwards to improve the result."
-        }
-      ]
-    },
-
-    /* ========================================================
-       ROUND 2 — EVALUATION
-       ======================================================== */
-    {
-      id: "evaluation",
-      name: "Evaluation",
-      icon: "🔍",
-      blurb: "Judge whether an AI's answer can be trusted.",
-      instructions: "Look closely at the AI's response, then select your verdict.",
+      instructions: "Match each fundamental AI concept with its correct definition.",
       seconds: 30,
       questions: [
         {
-          statement: "Who is better at using technology, older adults or teenagers?",
-          aiResponse: "Teenagers are always better at using technology because older adults cannot learn new digital skills.",
-          prompt: "Does the AI response contain bias?",
-          choices: ["Yes", "No"],
+          statement: "A type of artificial intelligence that creates new content — such as text, images, music, or code — based on patterns learned from training data.",
+          choices: ["Generative AI", "Discriminative AI", "Symbolic AI", "Rule-based AI"],
           answer: 0,
-          why: "Yes. The words \"always\" and \"cannot\" turn a general trend into a sweeping claim about an entire age group. That is age bias."
+          why: "Generative AI models create new, realistic outputs rather than simply classifying or scoring existing data."
         },
         {
-          statement: "Artificial Intelligence systems can think and make decisions exactly like humans.",
-          prompt: "True or False?",
-          choices: ["True", "False"],
+          statement: "A set of detailed, step-by-step instructions given to an AI model to guide its output.",
+          choices: ["Algorithm", "Prompt", "Hyperlink", "Source code"],
           answer: 1,
-          why: "False. AI processes patterns in data very quickly, but it has no understanding, intent, or lived experience the way a human does."
+          why: "A prompt is the user’s text input that directs a Large Language Model or image generator on what to produce."
         },
         {
-          statement: "Two students asked an AI about the same topic.",
-          promptA: "Explain AI.",
-          promptB: "Explain how artificial intelligence works by describing machine learning, training data, algorithms, and real-world applications.",
-          prompt: "Which prompt will get a clearer, more informative answer?",
-          choices: ["Prompt A", "Prompt B"],
+          statement: "When an AI system confidently generates false, misleading, or fabricated information as if it were accurate.",
+          choices: ["Overfitting", "Bias", "Hallucination", "Latency"],
+          answer: 2,
+          why: "AI hallucination happens because language models predict probable words rather than looking up verified facts."
+        },
+        {
+          statement: "An artificial intelligence system trained on vast amounts of text to understand, summarize, and generate human language.",
+          choices: ["Large Language Model (LLM)", "Computer Vision Model", "Reinforcement Engine", "Neural Filter"],
+          answer: 0,
+          why: "LLMs like ChatGPT, Claude, and Gemini process billions of words to analyze and write natural language."
+        },
+        {
+          statement: "Unfair or skewed outputs produced by an AI because its training data contained human prejudices or unequal representations.",
+          choices: ["Algorithmic Bias", "System Lag", "Model Corruption", "Data Saturation"],
+          answer: 0,
+          why: "AI models reflect patterns in their training data. If the data carries historical bias, the AI will replicate it."
+        }
+      ]
+    },
+    {
+      name: "Evaluation",
+      icon: "🔍",
+      blurb: "Judge whether an AI answer can be trusted.",
+      instructions: "Critical thinking practice: analyze the provided output or media carefully.",
+      seconds: 35,
+      questions: [
+        {
+          statement: "A student asked an AI model for references for an essay. The AI listed three research papers complete with titles, authors, and publication years.",
+          aiResponse: "Smith, J. (2022). 'The Impact of Deep Learning on High School Education.' Journal of Educational Technology, 14(2), 45-58.",
+          prompt: "What should the student do next before placing this reference in their bibliography?",
+          choices: [
+            "Use it immediately; AI citation engines never fabricate paper titles.",
+            "Verify the paper exists using a library database or Google Scholar.",
+            "Assume the citation is correct if the author's name sounds real.",
+            "Only change the publication year before adding it."
+          ],
           answer: 1,
-          why: "Prompt B wins. It names the topic, lists the concepts to cover, and asks for real examples. Specific prompts get specific answers."
+          why: "LLMs frequently fabricate realistic-sounding academic citations (hallucinations). Always verify references independently."
+        },
+        {
+          statement: "You ask an AI for historical facts about a minor local historical event. The response includes specific dates, official quote marks, and detailed statistics.",
+          prompt: "Which statement best describes how reliable this response is?",
+          choices: [
+            "Highly reliable because detailed numbers mean the AI checked official archives.",
+            "Potentially unreliable because confidence in tone does not equal factual accuracy.",
+            "Completely false because AI cannot answer questions about history.",
+            "Guaranteed accurate because quotation marks prove primary sources were read."
+          ],
+          answer: 1,
+          why: "AI text generators choose plausible-sounding words regardless of factual truth. A detailed tone is not a guarantee of accuracy."
+        },
+        {
+          statement: "Compare these two prompts given to a text generator for a science report:",
+          promptA: "Write an essay about global warming.",
+          promptB: "Explain three main causes of ocean warming for a 10th-grade audience in 200 words, citing key environmental factors.",
+          prompt: "Which prompt will yield a more structured, useful, and accurate response?",
+          choices: [
+            "Prompt A, because shorter prompts give the AI full creative freedom.",
+            "Prompt B, because specifying topic, audience, length, and scope yields targeted results.",
+            "Both will give identical outputs because AI ignores extra words.",
+            "Prompt A, because broad prompts reduce AI hallucination risks."
+          ],
+          answer: 1,
+          why: "Specific constraints (role, task, format, length) lead to clearer and far higher quality AI responses."
         },
         {
           statement: "One of these images was generated by AI. The other is a real photograph.",
@@ -111,7 +98,7 @@ const QUIZ = {
           mediaFiles: ["media/image-a.jpg", "media/image-b.jpg"],
           choices: ["Image A", "Image B"],
           answer: 0,
-          why: "Look for tell-tale signs: extra or fused fingers, garbled text on signs, mismatched shadows, and skin or surfaces that look too smooth."
+          why: "Image A exhibits classic AI artifacts: hyper-saturated lighting, unnatural background geometry, and blended textures."
         },
         {
           statement: "One of these clips is an AI-generated voice. The other is a real human recording.",
@@ -120,65 +107,78 @@ const QUIZ = {
           mediaFiles: ["media/audio-a.mp3", "media/audio-b.mp3"],
           choices: ["Audio A", "Audio B"],
           answer: 0,
-          why: "AI voices often have unnaturally even pacing, no breathing sounds, flat emotion, and odd stress on certain words."
+          why: "Audio A displays subtle synthetic robotic pacing, unnaturally uniform cadence, and slight digital vocal artifacts."
         }
       ]
     },
-
-    /* ========================================================
-       ROUND 3 — ETHICS
-       ======================================================== */
     {
-      id: "ethics",
       name: "Ethics",
       icon: "⚖️",
       blurb: "Decide the responsible way to use AI.",
-      instructions: "Read the situation carefully, then select the best choice.",
-      seconds: 35,
+      instructions: "Evaluate ethical dilemmas and determine responsible AI usage.",
+      seconds: 30,
       questions: [
         {
-          statement: "You used Artificial Intelligence to write your entire essay. Before submitting it, what is the most responsible thing to do?",
+          statement: "A classmate enters a full assignment prompt into an AI, copies the generated essay directly, and submits it under their own name.",
+          prompt: "Which ethical issue is most directly demonstrated here?",
           choices: [
-            "Review and rewrite the essay using your own ideas.",
-            "Submit it immediately because the AI wrote it well.",
-            "Ask the AI to make it sound more human.",
-            "Let your classmate submit it instead."
+            "Academic dishonest and plagiarism",
+            "Data privacy violation",
+            "Copyright infringement",
+            "Algorithmic bias"
           ],
           answer: 0,
-          why: "AI can help you start, but the thinking must be yours. Asking AI to \"sound more human\" only hides the problem — it does not solve it."
+          why: "Submitting AI-generated work as your own original writing violates academic integrity policies."
         },
         {
-          statement: "While using an Artificial Intelligence tool, it asks for access to your contacts, photos, and location. What should guide your decision?",
-          choices: ["Privacy", "Honesty", "Transparency", "Fairness"],
-          answer: 0,
-          why: "Privacy. Ask yourself: does this app actually need that data to work? If not, do not grant it."
-        },
-        {
-          statement: "An Artificial Intelligence recommends one student for a scholarship based only on their gender. Which action is NOT ethical?",
+          statement: "An artist discovers that thousands of their personal copyrighted drawings were used without permission or pay to train a commercial AI image model.",
+          prompt: "What primary ethical concern does this scenario highlight?",
           choices: [
-            "Reviewing other qualifications.",
-            "Considering everyone's skills fairly.",
-            "Accepting the AI's recommendation without questioning it.",
-            "Asking for more evidence before deciding."
+            "Copyright and fair compensation for original creators",
+            "Hardware energy consumption",
+            "Over-reliance on automation",
+            "Hallucination of art history facts"
           ],
-          answer: 2,
-          why: "Accepting it blindly. AI can inherit bias from its training data, so a human must always review decisions that affect people."
+          answer: 0,
+          why: "Using copyrighted artwork without consent or credit raises serious ethical concerns regarding intellectual property."
         },
         {
-          /* FIXED: the original switched from "Franzine" to "Sophia" mid-question. */
-          statement: "Franzine notices that an Artificial Intelligence recommends only one type of student for a leadership role. She decides to consider everyone's skills before making a decision. Which AI ethics principle does Franzine demonstrate?",
-          choices: ["Proper Citation", "Fairness and Bias", "Data Privacy", "Academic Honesty"],
+          statement: "A student wants to use an online AI tool to outline a research paper. Before uploading their notes, they notice the document contains personal names, addresses, and phone numbers.",
+          prompt: "What is the most responsible action to take?",
+          choices: [
+            "Upload the notes as-is because public AI tools keep data private.",
+            "Remove all personal and private information before inputting text into AI.",
+            "Use the AI only at night when fewer servers are processing data.",
+            "Change the font style so the AI cannot read private details."
+          ],
           answer: 1,
-          why: "Fairness and Bias. Franzine spotted a pattern that excluded people and corrected for it instead of following the AI."
+          why: "Public AI platforms may store user inputs for training. Never enter sensitive personal data."
         },
         {
-          statement: "A student uses an Artificial Intelligence tool for a research activity. Before asking questions, the student gives clear instructions, includes important details, and avoids asking the AI to create false information. Which AI ethics principle does this show?",
-          choices: ["Fairness and Bias", "Responsible Prompting", "Data Privacy", "Academic Honesty"],
+          statement: "A high school counselor uses an AI tool to automatically write letters of recommendation. The AI repeatedly assigns terms like 'assertive leader' to male applicants and 'helpful assistant' to female applicants with identical grades.",
+          prompt: "What ethical concept is occurring in this system?",
+          choices: [
+            "Gender bias in AI training patterns",
+            "High network latency",
+            "Normal statistical variation",
+            "Unsupervised user error"
+          ],
+          answer: 0,
+          why: "AI models trained on biased historical text will reproduce stereotypical gender associations unless corrected."
+        },
+        {
+          statement: "A student uses an AI to help brainstorm project topics, outline their main points, and check grammar, but writes all the final content themselves.",
+          prompt: "How should this use of AI be categorized?",
+          choices: [
+            "Severe plagiarism that should be penalized",
+            "Responsible collaboration as a learning tool",
+            "Unethical manipulation of educational standards",
+            "Violating software licensing terms"
+          ],
           answer: 1,
-          why: "Responsible Prompting. Being clear and honest in how you ask leads to accurate, trustworthy answers."
+          why: "Using AI as a brainstorming partner or tutor while authoring your own work represents responsible academic collaboration."
         }
       ]
     }
-
   ]
 };
