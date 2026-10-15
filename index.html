@@ -6,176 +6,223 @@
 <title>Gamified Artificial Intelligence Literacy Website — An AI Literacy Game</title>
 <style>
 /* ==========================================================
-   THEME
+   AI-LITERACY THEME & DESIGN SYSTEM
    ========================================================== */
 :root{
-  --bg:#f4f6fb;
-  --panel:#ffffff;
-  --ink:#16203a;
-  --ink-soft:#5b6580;
-  --line:#dfe4ee;
-  --brand:#2f5fd8;
-  --brand-soft:#e8eefc;
-  --good:#128a4d;
-  --good-soft:#e2f5eb;
-  --bad:#c02b3e;
-  --bad-soft:#fdeaec;
-  --warn:#b06a00;
-  --shadow:0 1px 2px rgba(20,32,64,.06), 0 8px 24px rgba(20,32,64,.08);
-  --radius:16px;
+  --bg:#f0f4fa;
+  --panel:rgba(255, 255, 255, 0.92);
+  --panel-border:rgba(79, 70, 229, 0.15);
+  --ink:#0f172a;
+  --ink-soft:#475569;
+  --line:#e2e8f0;
+  --brand:#4f46e5;
+  --brand-glow:rgba(79, 70, 229, 0.25);
+  --brand-soft:#eef2ff;
+  --accent-cyan:#06b6d4;
+  --accent-purple:#9333ea;
+  --good:#10b981;
+  --good-soft:#ecfdf5;
+  --bad:#ef4444;
+  --bad-soft:#fef2f2;
+  --warn:#f59e0b;
+  --shadow:0 10px 30px -10px rgba(79, 70, 229, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.05);
+  --radius:18px;
+  --grid-pattern:radial-gradient(circle, rgba(79, 70, 229, 0.08) 1px, transparent 1px);
 }
+
 html[data-theme="dark"]{
-  --bg:#0e1421;
-  --panel:#18202f;
-  --ink:#eef2f9;
-  --ink-soft:#9aa6bd;
-  --line:#2a344a;
-  --brand:#6f9bff;
-  --brand-soft:#1e2b47;
-  --good:#4ade9a;
-  --good-soft:#153126;
-  --bad:#ff8a99;
-  --bad-soft:#3a1a20;
-  --warn:#f0b45e;
-  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  --bg:#090d16;
+  --panel:rgba(18, 26, 43, 0.85);
+  --panel-border:rgba(99, 102, 241, 0.25);
+  --ink:#f8fafc;
+  --ink-soft:#94a3b8;
+  --line:#1e293b;
+  --brand:#6366f1;
+  --brand-glow:rgba(99, 102, 241, 0.35);
+  --brand-soft:#1e1b4b;
+  --accent-cyan:#22d3ee;
+  --accent-purple:#c084fc;
+  --good:#34d399;
+  --good-soft:#064e3b;
+  --bad:#f87171;
+  --bad-soft:#451a1a;
+  --warn:#fbbf24;
+  --shadow:0 12px 36px -8px rgba(0, 0, 0, 0.6), 0 0 20px 0 rgba(99, 102, 241, 0.15);
+  --grid-pattern:radial-gradient(circle, rgba(99, 102, 241, 0.15) 1px, transparent 1px);
 }
 
 *{box-sizing:border-box}
 body{
   margin:0; background:var(--bg); color:var(--ink);
-  font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   line-height:1.5; -webkit-font-smoothing:antialiased;
+  background-image: var(--grid-pattern);
+  background-size: 24px 24px;
+  min-height:100vh;
 }
 button, input{font-family:inherit}
 
 /* ==========================================================
-   LAYOUT
+   LAYOUT & CONTAINER
    ========================================================== */
 .wrap{max-width:1080px;margin:0 auto;padding:20px 20px 64px}
-.screen{display:none;animation:rise .28s ease both}
+.screen{display:none;animation:rise .3s cubic-bezier(0.16, 1, 0.3, 1) both}
 .screen.on{display:block}
-@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
 /* ==========================================================
    TOP BAR
    ========================================================== */
 .topbar{
   display:flex;align-items:center;gap:14px;flex-wrap:wrap;
-  padding:12px 0 16px;border-bottom:1px solid var(--line);margin-bottom:22px;
+  padding:14px 20px;border-bottom:1px solid var(--panel-border);margin-bottom:28px;
+  background:var(--panel);backdrop-filter:blur(12px);border-radius:var(--radius);
+  box-shadow:var(--shadow);
 }
-.brandmark{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em;font-size:1.05rem}
+.brandmark{
+  display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em;font-size:1.05rem;
+  background:linear-gradient(135deg, var(--brand), var(--accent-cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
 .brandmark .dot{
-  width:26px;height:26px;border-radius:50%;flex:0 0 auto;
-  background:radial-gradient(circle,var(--bad) 0 22%,var(--panel) 22% 42%,var(--bad) 42% 62%,var(--panel) 62% 82%,var(--bad) 82% 100%);
-  border:1px solid var(--line);
+  width:14px;height:14px;border-radius:50%;flex:0 0 auto;
+  background:var(--accent-cyan);
+  box-shadow:0 0 10px var(--accent-cyan);
 }
 .topbar .spacer{flex:1}
 .iconbtn{
-  border:1px solid var(--line);background:var(--panel);color:var(--ink-soft);
-  border-radius:10px;padding:7px 12px;font-size:.85rem;cursor:pointer;font-weight:600;
+  border:1px solid var(--panel-border);background:var(--panel);color:var(--ink-soft);
+  border-radius:10px;padding:8px 14px;font-size:.85rem;cursor:pointer;font-weight:600;
+  transition:all .2s ease;
 }
-.iconbtn:hover{border-color:var(--brand);color:var(--brand)}
+.iconbtn:hover{border-color:var(--brand);color:var(--brand);box-shadow:0 0 12px var(--brand-glow)}
 .iconbtn[aria-pressed="false"]{opacity:.55}
 
 /* ==========================================================
-   START SCREEN
+   HERO & TYPOGRAPHY
    ========================================================== */
-.hero{text-align:center;padding:26px 0 8px}
-.hero h1{font-size:clamp(2rem,5.5vw,3.3rem);margin:0 0 8px;letter-spacing:-.035em;line-height:1.08}
-.hero p.sub{font-size:1.1rem;color:var(--ink-soft);margin:0 auto 26px;max-width:34rem}
+.hero{text-align:center;padding:26px 0 12px}
+.hero h1{
+  font-size:clamp(2rem,5.5vw,3.2rem);margin:0 0 12px;letter-spacing:-.035em;line-height:1.1;
+  font-weight:800;
+  background:linear-gradient(135deg, var(--ink) 30%, var(--brand) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero p.sub{font-size:1.1rem;color:var(--ink-soft);margin:0 auto 28px;max-width:36rem}
 .pill{
-  display:inline-block;background:var(--brand-soft);color:var(--brand);
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--brand-soft);color:var(--brand);
   font-weight:700;font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;
-  padding:6px 14px;border-radius:999px;margin-bottom:18px;
+  padding:6px 16px;border-radius:999px;margin-bottom:18px;
+  border:1px solid var(--panel-border);
+  box-shadow:0 0 15px var(--brand-glow);
 }
 .namebox{
-  margin:0 auto 20px;max-width:320px;text-align:left;
+  margin:0 auto 24px;max-width:340px;text-align:left;
+  background:var(--panel);padding:16px;border-radius:var(--radius);
+  border:1px solid var(--panel-border);box-shadow:var(--shadow);
 }
 .namebox label{
-  display:block;font-size:.82rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px;
+  display:block;font-size:.78rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);margin-bottom:8px;
 }
 .namebox input{
-  width:100%;padding:12px 16px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-size:1rem;outline:none;
+  width:100%;padding:12px 16px;border-radius:10px;border:1px solid var(--line);
+  background:var(--bg);color:var(--ink);font-size:1rem;outline:none;
+  transition:border-color .2s, box-shadow .2s;
 }
-.namebox input:focus{border-color:var(--brand)}
+.namebox input:focus{border-color:var(--brand);box-shadow:0 0 10px var(--brand-glow)}
 
-.roundgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin:30px 0}
+/* ==========================================================
+   CARDS & GRID
+   ========================================================== */
+.roundgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin:32px 0}
 .roundcard{
-  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
-  padding:22px 20px;box-shadow:var(--shadow);text-align:left;
+  background:var(--panel);border:1px solid var(--panel-border);border-radius:var(--radius);
+  padding:24px 22px;box-shadow:var(--shadow);text-align:left;
+  backdrop-filter:blur(8px);transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
-.roundcard .ic{font-size:1.8rem;display:block;margin-bottom:10px}
-.roundcard h3{margin:0 0 6px;font-size:1.12rem;letter-spacing:-.01em}
+.roundcard:hover{
+  transform:translateY(-4px);border-color:var(--brand);
+  box-shadow:0 16px 32px -8px var(--brand-glow);
+}
+.roundcard .ic{font-size:2rem;display:block;margin-bottom:12px}
+.roundcard h3{margin:0 0 6px;font-size:1.15rem;letter-spacing:-.01em;font-weight:700}
 .roundcard p{margin:0;color:var(--ink-soft);font-size:.93rem}
 .roundcard .count{
-  display:inline-block;margin-top:12px;font-size:.78rem;font-weight:700;
-  color:var(--ink-soft);background:var(--bg);border:1px solid var(--line);
-  padding:3px 10px;border-radius:999px;
+  display:inline-block;margin-top:14px;font-size:.78rem;font-weight:700;
+  color:var(--brand);background:var(--brand-soft);border:1px solid var(--panel-border);
+  padding:4px 12px;border-radius:999px;
 }
+
+/* ==========================================================
+   BUTTONS
+   ========================================================== */
 .btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:9px;
-  background:var(--brand);color:#fff;border:none;border-radius:12px;
-  padding:15px 34px;font-size:1.05rem;font-weight:700;cursor:pointer;
-  box-shadow:0 4px 14px rgba(47,95,216,.28);transition:transform .12s,box-shadow .12s;
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  background:linear-gradient(135deg, var(--brand), var(--accent-purple));
+  color:#fff;border:none;border-radius:12px;
+  padding:15px 36px;font-size:1.05rem;font-weight:700;cursor:pointer;
+  box-shadow:0 6px 20px var(--brand-glow);transition:transform .15s, box-shadow .15s, filter .15s;
 }
-.btn:hover{transform:translateY(-1px);box-shadow:0 7px 20px rgba(47,95,216,.34)}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.1);box-shadow:0 8px 25px var(--brand-glow)}
 .btn:active{transform:translateY(0)}
 .btn.ghost{
-  background:var(--panel);color:var(--ink);border:1px solid var(--line);box-shadow:none;
+  background:var(--panel);color:var(--ink);border:1px solid var(--panel-border);box-shadow:none;
   padding:13px 26px;font-size:.98rem;
 }
-.btn.ghost:hover{border-color:var(--brand);color:var(--brand);box-shadow:none}
-.btn.small-btn{padding:6px 12px;font-size:.8rem;border-radius:8px}
+.btn.ghost:hover{border-color:var(--brand);color:var(--brand);box-shadow:0 0 15px var(--brand-glow)}
+.btn.small-btn{padding:8px 14px;font-size:.82rem;border-radius:8px}
 .btn.danger-btn{background:var(--bad);box-shadow:none}
-.btn.danger-btn:hover{background:#a02334}
+.btn.danger-btn:hover{background:#dc2626}
 .btnrow{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px}
 
 .howto{
-  margin:34px auto 0;max-width:620px;background:var(--panel);border:1px solid var(--line);
-  border-radius:var(--radius);padding:20px 24px;text-align:left;box-shadow:var(--shadow);
+  margin:36px auto 0;max-width:640px;background:var(--panel);border:1px solid var(--panel-border);
+  border-radius:var(--radius);padding:24px 28px;text-align:left;box-shadow:var(--shadow);
+  backdrop-filter:blur(8px);
 }
-.howto h4{margin:0 0 10px;font-size:.8rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft)}
+.howto h4{margin:0 0 12px;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--brand)}
 .howto ol{margin:0;padding-left:20px;color:var(--ink-soft);font-size:.95rem}
-.howto li{margin-bottom:5px}
+.howto li{margin-bottom:6px}
 .howto b{color:var(--ink)}
 
 /* ==========================================================
-   HIDDEN ADMIN MODAL
+   ADMIN MODAL
    ========================================================== */
 .admin-modal{
   display:none;position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,0.6);z-index:9999;place-items:center;padding:20px;
+  background:rgba(15, 23, 42, 0.75);backdrop-filter:blur(6px);z-index:9999;place-items:center;padding:20px;
 }
 .admin-modal.on{display:grid}
 .admin-content{
-  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
-  padding:24px;max-width:650px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow);
+  background:var(--panel);border:1px solid var(--panel-border);border-radius:var(--radius);
+  padding:28px;max-width:680px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow);
 }
-.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.admin-header h3{margin:0;font-size:1.2rem}
+.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.admin-header h3{margin:0;font-size:1.25rem;font-weight:700}
 
-.l-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:.95rem}
-.l-table th{text-align:left;padding:8px;border-bottom:2px solid var(--line);color:var(--ink-soft);font-size:.78rem;text-transform:uppercase}
-.l-table td{padding:10px 8px;border-bottom:1px solid var(--line)}
+.l-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:.95rem}
+.l-table th{text-align:left;padding:10px 8px;border-bottom:2px solid var(--line);color:var(--brand);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em}
+.l-table td{padding:12px 8px;border-bottom:1px solid var(--line)}
 .l-table tr:last-child td{border-bottom:none}
 
 /* ==========================================================
-   HUD (in-game header)
+   HUD & PROGRESS
    ========================================================== */
 .hud{
   display:flex;align-items:center;gap:16px;flex-wrap:wrap;
-  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
-  padding:12px 18px;box-shadow:var(--shadow);margin-bottom:18px;
+  background:var(--panel);border:1px solid var(--panel-border);border-radius:var(--radius);
+  padding:14px 22px;box-shadow:var(--shadow);margin-bottom:20px;backdrop-filter:blur(8px);
 }
-.hud .roundtag{font-weight:800;letter-spacing:-.01em;font-size:1rem}
+.hud .roundtag{font-weight:800;letter-spacing:-.01em;font-size:1.05rem;color:var(--brand)}
 .hud .roundtag span{color:var(--ink-soft);font-weight:600}
 .hud .spacer{flex:1}
-.stat{text-align:center;min-width:62px}
-.stat .v{font-size:1.25rem;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.stat{text-align:center;min-width:64px}
+.stat .v{font-size:1.3rem;font-weight:800;letter-spacing:-.02em;line-height:1.1}
 .stat .k{font-size:.68rem;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-soft);font-weight:700}
 
-.progress{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:22px}
-.progress i{display:block;height:100%;background:var(--brand);border-radius:99px;transition:width .35s ease}
+.progress{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:22px}
+.progress i{display:block;height:100%;background:linear-gradient(90deg, var(--brand), var(--accent-cyan));border-radius:99px;transition:width .35s ease}
 
 .timerbar{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin:-14px 0 22px}
 .timerbar i{display:block;height:100%;background:var(--good);border-radius:99px;transition:width 1s linear,background .3s}
@@ -183,131 +230,140 @@ button, input{font-family:inherit}
 .timerbar i.low{background:var(--bad)}
 
 /* ==========================================================
-   QUESTION
+   QUESTION CARD
    ========================================================== */
 .qcard{
-  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
-  padding:30px 32px;box-shadow:var(--shadow);margin-bottom:24px;
+  background:var(--panel);border:1px solid var(--panel-border);border-radius:var(--radius);
+  padding:32px 34px;box-shadow:var(--shadow);margin-bottom:24px;backdrop-filter:blur(8px);
 }
 .qcard .qnum{
-  font-size:.75rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
   color:var(--brand);margin-bottom:12px;
 }
-.statement{font-size:clamp(1.2rem,2.6vw,1.6rem);font-weight:650;letter-spacing:-.02em;margin:0}
+.statement{font-size:clamp(1.2rem,2.6vw,1.6rem);font-weight:700;letter-spacing:-.02em;margin:0;line-height:1.35}
 .askline{
-  margin:18px 0 0;font-size:1.02rem;font-weight:700;color:var(--ink);
-  padding-top:16px;border-top:1px dashed var(--line);
+  margin:20px 0 0;font-size:1.05rem;font-weight:700;color:var(--ink);
+  padding-top:18px;border-top:1px dashed var(--line);
 }
 
 .airesponse{
-  margin:20px 0 0;background:var(--bg);border:1px solid var(--line);
-  border-left:4px solid var(--brand);border-radius:12px;padding:16px 18px;
+  margin:22px 0 0;background:var(--brand-soft);border:1px solid var(--panel-border);
+  border-left:4px solid var(--brand);border-radius:14px;padding:18px 20px;
 }
 .airesponse .lbl{
-  font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--ink-soft);margin-bottom:6px;
+  font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--brand);margin-bottom:6px;
 }
 .airesponse .txt{font-size:1.05rem;font-style:italic}
 
-.promptpair{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
-.promptpair .pp{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
-.promptpair .pp .lbl{font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px}
+.promptpair{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
+.promptpair .pp{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.promptpair .pp .lbl{font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--brand);margin-bottom:6px}
 .promptpair .pp .txt{font-size:.98rem;font-family:ui-monospace,Consolas,monospace}
 @media(max-width:640px){.promptpair{grid-template-columns:1fr}}
 
 /* ==========================================================
-   TARGETS
+   TARGETS / OPTIONS
    ========================================================== */
-.targets{display:grid;gap:14px;cursor:pointer}
+.targets{display:grid;gap:16px;cursor:pointer}
 .targets.two{grid-template-columns:1fr 1fr}
 .targets.four{grid-template-columns:1fr 1fr}
 @media(max-width:640px){.targets.two,.targets.four{grid-template-columns:1fr}}
 
 .target{
-  position:relative;display:flex;align-items:center;gap:14px;text-align:left;
-  background:var(--panel);border:2px solid var(--line);border-radius:var(--radius);
-  padding:20px 22px;font-size:1.06rem;font-weight:600;color:var(--ink);
-  cursor:pointer;box-shadow:var(--shadow);transition:border-color .15s,transform .12s,background .15s;
+  position:relative;display:flex;align-items:center;gap:16px;text-align:left;
+  background:var(--panel);border:2px solid var(--panel-border);border-radius:var(--radius);
+  padding:22px 24px;font-size:1.06rem;font-weight:600;color:var(--ink);
+  cursor:pointer;box-shadow:var(--shadow);backdrop-filter:blur(8px);
+  transition:border-color .2s, transform .15s, background .2s, box-shadow .2s;
   width:100%;
 }
-.target:hover:not(:disabled){border-color:var(--brand);transform:translateY(-2px);background:var(--brand-soft)}
+.target:hover:not(:disabled){
+  border-color:var(--brand);transform:translateY(-2px);
+  background:var(--brand-soft);box-shadow:0 8px 20px var(--brand-glow);
+}
 .target:disabled{cursor:default}
 .target .ring{
-  flex:0 0 auto;width:34px;height:34px;border-radius:50%;
-  border:2px solid var(--line);display:grid;place-items:center;
-  font-weight:800;font-size:.9rem;color:var(--ink-soft);transition:.15s;
+  flex:0 0 auto;width:36px;height:36px;border-radius:50%;
+  border:2px solid var(--panel-border);background:var(--bg);
+  display:grid;place-items:center;font-weight:800;font-size:.95rem;color:var(--brand);
+  transition:.2s;
 }
-.target:hover:not(:disabled) .ring{border-color:var(--brand);color:var(--brand)}
+.target:hover:not(:disabled) .ring{border-color:var(--brand);background:var(--brand);color:#fff}
 .target.hit{border-color:var(--good);background:var(--good-soft);animation:pop .3s ease}
-.target.hit .ring{border-color:var(--good);color:var(--good)}
+.target.hit .ring{border-color:var(--good);background:var(--good);color:#fff}
 .target.miss{border-color:var(--bad);background:var(--bad-soft);animation:shake .35s ease}
-.target.miss .ring{border-color:var(--bad);color:var(--bad)}
+.target.miss .ring{border-color:var(--bad);background:var(--bad);color:#fff}
 .target.reveal{border-color:var(--good);background:var(--good-soft)}
-.target .mark{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:1.3rem}
-@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.035)}100%{transform:scale(1)}}
-@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.target .mark{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:1.4rem}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.02)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
 
 /* media targets */
-.target.media{flex-direction:column;align-items:stretch;gap:12px;padding:14px}
+.target.media{flex-direction:column;align-items:stretch;gap:14px;padding:16px}
 .target.media .thumb{
-  width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;background:var(--bg);
+  width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;background:var(--bg);
   border:1px solid var(--line);display:block;
 }
 .target.media .ph{
-  width:100%;aspect-ratio:4/3;border-radius:10px;background:var(--bg);
+  width:100%;aspect-ratio:4/3;border-radius:12px;background:var(--bg);
   border:2px dashed var(--line);display:grid;place-items:center;text-align:center;
-  color:var(--ink-soft);font-size:.85rem;font-weight:600;padding:14px;
+  color:var(--ink-soft);font-size:.85rem;font-weight:600;padding:16px;
 }
-.target.media .cap{display:flex;align-items:center;gap:10px}
+.target.media .cap{display:flex;align-items:center;gap:12px}
 .target.media audio{width:100%;cursor:pointer}
 
 /* ==========================================================
    FEEDBACK
    ========================================================== */
 .feedback{
-  margin-top:20px;border-radius:var(--radius);padding:20px 24px;
-  border:1px solid var(--line);background:var(--panel);box-shadow:var(--shadow);
-  display:none;animation:rise .25s ease both;
+  margin-top:22px;border-radius:var(--radius);padding:22px 26px;
+  border:1px solid var(--panel-border);background:var(--panel);box-shadow:var(--shadow);
+  display:none;animation:rise .25s ease both;backdrop-filter:blur(8px);
 }
 .feedback.on{display:block}
-.feedback.good{border-left:5px solid var(--good)}
-.feedback.bad{border-left:5px solid var(--bad)}
-.feedback .head{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.1rem;margin-bottom:8px}
+.feedback.good{border-left:6px solid var(--good)}
+.feedback.bad{border-left:6px solid var(--bad)}
+.feedback .head{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem;margin-bottom:8px}
 .feedback.good .head{color:var(--good)}
 .feedback.bad .head{color:var(--bad)}
 .feedback .why{color:var(--ink-soft);font-size:1rem;margin:0}
 .feedback .why b{color:var(--ink)}
-.feedback .next{margin-top:18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.feedback .next{margin-top:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .feedback .hintkey{font-size:.82rem;color:var(--ink-soft)}
 kbd{
-  background:var(--bg);border:1px solid var(--line);border-bottom-width:2px;
-  border-radius:6px;padding:1px 7px;font-size:.82em;font-family:ui-monospace,Consolas,monospace;
+  background:var(--bg);border:1px solid var(--panel-border);border-bottom-width:2px;
+  border-radius:6px;padding:2px 8px;font-size:.82em;font-family:ui-monospace,Consolas,monospace;color:var(--brand);
 }
 
 /* ==========================================================
-   RESULTS
+   RESULTS SCREEN
    ========================================================== */
-.scorehero{text-align:center;padding:20px 0 10px}
-.scorehero .big{font-size:clamp(3rem,11vw,5.5rem);font-weight:800;letter-spacing:-.05em;line-height:1;color:var(--brand)}
-.scorehero .of{color:var(--ink-soft);font-size:1.05rem;margin-top:4px}
-.scorehero .grade{font-size:1.35rem;font-weight:700;margin-top:14px}
-.breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:26px 0}
-.bd{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;text-align:center;box-shadow:var(--shadow)}
-.bd .v{font-size:1.7rem;font-weight:800;letter-spacing:-.02em}
-.bd .k{font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-soft);font-weight:700;margin-top:2px}
+.scorehero{text-align:center;padding:24px 0 12px}
+.scorehero .big{
+  font-size:clamp(3.5rem,12vw,6rem);font-weight:800;letter-spacing:-.05em;line-height:1;
+  background:linear-gradient(135deg, var(--brand), var(--accent-cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.scorehero .of{color:var(--ink-soft);font-size:1.08rem;margin-top:6px}
+.scorehero .grade{font-size:1.4rem;font-weight:700;margin-top:16px}
+.breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin:28px 0}
+.bd{background:var(--panel);border:1px solid var(--panel-border);border-radius:var(--radius);padding:20px;text-align:center;box-shadow:var(--shadow);backdrop-filter:blur(8px)}
+.bd .v{font-size:1.8rem;font-weight:800;letter-spacing:-.02em;color:var(--brand)}
+.bd .k{font-size:.72rem;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-soft);font-weight:700;margin-top:4px}
 
-.review{margin-top:14px}
-.review h3{font-size:.82rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 12px}
+.review{margin-top:16px}
+.review h3{font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;color:var(--brand);margin:0 0 14px}
 .ritem{
-  background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--bad);
-  border-radius:12px;padding:16px 18px;margin-bottom:10px;box-shadow:var(--shadow);
+  background:var(--panel);border:1px solid var(--panel-border);border-left:5px solid var(--bad);
+  border-radius:14px;padding:18px 20px;margin-bottom:12px;box-shadow:var(--shadow);backdrop-filter:blur(8px);
 }
 .ritem.ok{border-left-color:var(--good)}
-.ritem .rq{font-weight:650;margin-bottom:8px}
-.ritem .ra{font-size:.93rem;color:var(--ink-soft)}
+.ritem .rq{font-weight:700;margin-bottom:8px}
+.ritem .ra{font-size:.95rem;color:var(--ink-soft)}
 .ritem .ra .yours{color:var(--bad);font-weight:700}
 .ritem .ra .right{color:var(--good);font-weight:700}
-.ritem .rw{font-size:.92rem;color:var(--ink-soft);margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
+.ritem .rw{font-size:.93rem;color:var(--ink-soft);margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
 
 .printonly{display:none}
 @media print{
@@ -334,7 +390,7 @@ kbd{
   <!-- ================= START ================= -->
   <section class="screen on" id="scStart">
     <div class="hero">
-      <span class="pill">AI Literacy · Interactive Quiz</span>
+      <span class="pill">🤖 AI Literacy · Interactive Quiz</span>
       <h1 id="heroTitle">Gamified Artificial Intelligence Literacy Website</h1>
       <p class="sub" id="heroSub">Read the statement and select the correct answer.</p>
       
@@ -344,7 +400,7 @@ kbd{
       </div>
 
       <div class="btnrow">
-        <button class="btn" id="btnPlayAll">🎯 Start Full Game</button>
+        <button class="btn" id="btnPlayAll">⚡ Start Full Game</button>
       </div>
     </div>
 
@@ -371,7 +427,7 @@ kbd{
       <div class="btnrow">
         <button class="btn" id="btnRoundGo">Begin Round →</button>
       </div>
-      <p class="hintkey" style="margin-top:16px;color:var(--ink-soft);font-size:.85rem">
+      <p class="hintkey" style="margin-top:18px;color:var(--ink-soft);font-size:.88rem">
         or press <kbd>Enter</kbd>
       </p>
     </div>
@@ -418,7 +474,7 @@ kbd{
       <div class="grade" id="endGrade"></div>
     </div>
     <div class="breakdown" id="endBreak"></div>
-    <div class="btnrow" style="margin-bottom:26px">
+    <div class="btnrow" style="margin-bottom:28px">
       <button class="btn" id="btnAgain">↻ Play Again</button>
       <button class="btn ghost" id="btnPrint">🖨 Print / Save PDF</button>
       <button class="btn ghost" id="btnHome">⌂ Main Menu</button>
@@ -434,7 +490,7 @@ kbd{
         <h3>🔒 Teacher Dashboard (Experimental Data)</h3>
         <button class="btn ghost small-btn" onclick="closeAdmin()">✕ Close</button>
       </div>
-      <div style="display:flex;gap:8px;margin-bottom:16px;">
+      <div style="display:flex;gap:8px;margin-bottom:18px;">
         <button class="btn ghost small-btn" onclick="exportToCSV()">📥 Export Excel (CSV)</button>
         <button class="btn danger-btn small-btn" onclick="clearLeaderboard()">🗑️ Clear Data for Next Section</button>
       </div>
@@ -614,7 +670,7 @@ function buildStart(){
     const c = el('button','roundcard');
     c.style.cursor='pointer';
     c.innerHTML =
-      `<span class="ic">${r.icon||'🎯'}</span>
+      `<span class="ic">${r.icon||'🤖'}</span>
        <h3>Round ${i+1} · ${r.name}</h3>
        <p>${r.blurb||''}</p>
        <span class="count">${r.questions.length} questions · click to play this round only</span>`;
@@ -661,7 +717,7 @@ function curQ(){ return curRound().questions[G.qi]; }
 function roundIntro(){
   const r = curRound();
   $('riPill').textContent  = `Round ${G.rounds[G.ri]+1} of ${QUIZ.rounds.length}`;
-  $('riName').textContent  = `${r.icon||'🎯'} ${r.name}`;
+  $('riName').textContent  = `${r.icon||'🤖'} ${r.name}`;
   $('riInstr').textContent = r.instructions || r.blurb || '';
   show('scRound');
 }
@@ -672,7 +728,7 @@ function renderQ(){
   $('feedback').classList.remove('on');
 
   /* HUD */
-  $('hudRound').innerHTML = `${r.icon||'🎯'} ${r.name} <span>· Question ${G.qi+1} of ${r.questions.length}</span>`;
+  $('hudRound').innerHTML = `${r.icon||'🤖'} ${r.name} <span>· Question ${G.qi+1} of ${r.questions.length}</span>`;
   updateHud();
 
   /* progress across the whole session */
@@ -872,7 +928,7 @@ function finish(){
   $('endPct').textContent = pct+'\%';$('endOf').textContent  = `${G.hits} of ${total} statements correct`;
   $('endGrade').textContent =
       pct===100 ? '🏆 Perfect score!'
-    : pct>=80  ? '🎯 Excellent — strong AI literacy.'
+    : pct>=80  ? '⭐ Excellent — strong AI literacy.'
     : pct>=60  ? '👍 Good work — review the answers below.'
     : pct>=40  ? '📖 Getting there — go over the explanations.'
     :            '🔁 Give it another run after reviewing.';
